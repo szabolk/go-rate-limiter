@@ -10,4 +10,5 @@ type RateLimiter interface {
 }
 
 // Clock returns the current time
+// Essentially is used for simulating time rather than having to wait for real time to pass during testing
 type Clock func() time.Time
