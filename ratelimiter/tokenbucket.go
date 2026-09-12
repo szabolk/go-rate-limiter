@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Notes for self: Basically while a bucket has tokens, requests are accepted
 type TokenBucket struct {
 	mu         sync.Mutex
 	capacity   float64
@@ -22,4 +23,25 @@ func NewTokenBucket(capacity float64, refillRate float64, clock Clock) *TokenBuc
 		tokens:     capacity,
 		lastRefill: clock(),
 	}
+}
+
+func (t *TokenBucket) Allow() bool {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	currentTime := t.clock()
+	elapsedTime := currentTime.Sub(t.lastRefill).Seconds()
+	t.tokens += elapsedTime * t.refillRate
+
+	if t.tokens > t.capacity {
+		t.tokens = t.capacity
+	}
+
+	t.lastRefill = currentTime
+	if t.tokens < 1 {
+		return false
+	}
+	t.tokens--
+	return true
+
 }

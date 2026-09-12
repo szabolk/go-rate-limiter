@@ -18,7 +18,7 @@ type SlidingWindow struct {
 	prevCount int
 }
 
-func newSlidingWindow(clock Clock, limit int, window time.Duration) *SlidingWindow {
+func NewSlidingWindow(clock Clock, limit int, window time.Duration) *SlidingWindow {
 	return &SlidingWindow{
 		limit:     limit,
 		window:    window,

@@ -20,7 +20,7 @@ type FixedWindow struct {
 	count       int
 }
 
-func newFixedWindow(clock Clock, limit int, window time.Duration) *FixedWindow {
+func NewFixedWindow(clock Clock, limit int, window time.Duration) *FixedWindow {
 	return &FixedWindow{
 		limit:       limit,
 		window:      window,
