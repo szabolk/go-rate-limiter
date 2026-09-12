@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// Notes for myself: Sliding window, while more complicated, is better than fixed window in a few ways
+// Unlike fixed window, SW doesn't suffer from the all requests at the end of the time period and then immediately
+// request more at the start of the next one.
 type SlidingWindow struct {
 	mu        sync.Mutex
 	limit     int
@@ -44,6 +47,14 @@ func (s *SlidingWindow) Allow() bool {
 	}
 
 	percentOverlap := float64(s.window-elapsedTime) / float64(s.window)
+	if percentOverlap < 0 {
+		percentOverlap = 0
+	}
+	weightedCount := float64(s.prevCount)*percentOverlap + float64(s.currCount) // Estimates # of requests by using the overlap percent and calculating the count
 
-	return false // temp
+	if weightedCount >= float64(s.limit) {
+		return false
+	}
+	s.currCount++
+	return true
 }
